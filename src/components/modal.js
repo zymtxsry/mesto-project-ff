@@ -1,4 +1,4 @@
-import { modalImage } from "../pages/index.js";
+// import { modalImage } from "../pages/index.js";
 
 export function closePopup(popup) {
     popup.classList.remove('popup_is-opened');
@@ -39,15 +39,15 @@ export const setCloseModalWindowEventListeners = modalElement => {
 };
 
 
-export function openImageModal (link, name) {
-    const modalImageElement = modalImage.querySelector('.popup__image');
-    const modalCaption = modalImage.querySelector('.popup__caption');
+// export function openImageModal (link, name) {
+//     const modalImageElement = modalImage.querySelector('.popup__image');
+//     const modalCaption = modalImage.querySelector('.popup__caption');
   
-    modalImageElement.src = link;
-    modalImageElement.alt = name;
-    modalCaption.textContent = name;
+//     modalImageElement.src = link;
+//     modalImageElement.alt = name;
+//     modalCaption.textContent = name;
   
-    openPopup(modalImage);
-  }
+//     openPopup(modalImage);
+//   }
 
 
