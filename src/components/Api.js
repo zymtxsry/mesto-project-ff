@@ -88,7 +88,7 @@ export function updateAvatar(data) {
 
 // Удаление карточки
 export function deleteCard(cardId, cardElement) {
-  fetch(`${config.apiCardUrl}/${cardId}`, {
+  return fetch(`${config.apiCardUrl}/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
   })

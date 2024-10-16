@@ -20,8 +20,6 @@ import {
 } from "../components/modal.js";
 
 import {
-  showInputError,
-  hideInputError,
   enableValidation,
   clearValidationError,
 } from "../components/validationForms.js";
@@ -93,19 +91,6 @@ profileAvatarElement.addEventListener("click", () => {
   clearValidationError(avatarPopup.querySelector(".popup__form"));
 });
 
-avatarInput.addEventListener("input", () => {
-  const avatarValue = avatarInput.value;
-  if (!avatarValue) {
-    showInputError(
-      avatarPopup.querySelector(".popup__form"),
-      avatarInput,
-      "Поле обязательно для заполнения"
-    );
-  } else {
-    hideInputError(avatarPopup.querySelector(".popup__form"), avatarInput);
-  }
-});
-
 avatarPopup
   .querySelector(".popup__form")
   .addEventListener("submit", (event) => {
@@ -121,7 +106,7 @@ avatarPopup
         closePopup(avatarPopup);
       })
       .catch((error) => {
-        throw error; // Обработка ошибки в реальном коде
+        console.log(error)
       })
       .finally(() => {
         resetButtonText();
@@ -134,15 +119,29 @@ export function handleDeleteClick(cardId, cardElement) {
   openPopup(modalDeleteCard);
 }
 
-modalDeleteCard
-  .querySelector(".popup__container")
-  .addEventListener("click", (event) => {
-    if (event.target.classList.contains("popup__button") && cardToDelete) {
-      deleteCard(cardToDelete.id, cardToDelete.element);
-      closePopup(modalDeleteCard);
-      cardToDelete = null;
-    }
-  });
+// modalDeleteCard.querySelector(".popup__container").addEventListener("click", (event) => {
+//     if (event.target.classList.contains("popup__button") && cardToDelete) {
+//       console.log(cardToDelete.id, cardToDelete.element)
+//       deleteCard(cardToDelete.id, cardToDelete.element)
+//       closePopup(modalDeleteCard);
+//       cardToDelete = null;
+//     }
+//   });
+
+modalDeleteCard.querySelector(".popup__container").addEventListener("click", (event) => {
+  if (event.target.classList.contains("popup__button") && cardToDelete) {
+    console.log(cardToDelete.id, cardToDelete.element);
+    deleteCard(cardToDelete.id, cardToDelete.element)
+      .then(() => {
+        closePopup(modalDeleteCard);
+        cardToDelete = null;
+      })
+      .catch((error) => {
+        console.log(error); 
+      });
+  }
+});
+
 
 modalDeleteCard.querySelector(".popup__close").addEventListener("click", () => {
   closePopup(modalDeleteCard);
@@ -162,10 +161,14 @@ function editProfileFormSubmit(event) {
   const aboutUpdate = descriptionInput.value;
   const resetButtonText = buttonLoading(editPopup,'Сохранение...', 'Сохранить')
 
-  updateUserInfo(nameUpdate, aboutUpdate).then((data) => {
+  updateUserInfo(nameUpdate, aboutUpdate)
+  .then((data) => {
     profileNameContent.textContent = data.name;
     profileDescriptionContent.textContent = data.about;
     closePopup(editPopup);
+  })
+  .catch((error) => {
+    console.error(error);
   })
   .finally(() => {
     resetButtonText()
