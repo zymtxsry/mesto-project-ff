@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { sourceMapsEnabled } = require("process");
 
 module.exports = {
   entry: { main: "./src/pages/index.js" },
@@ -17,6 +18,7 @@ module.exports = {
     port: 8080,
     open: true,
   },
+  devtool: "source-map",
   module: {
     rules: [
       {

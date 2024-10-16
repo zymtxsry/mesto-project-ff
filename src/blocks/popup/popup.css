@@ -23,3 +23,12 @@
   opacity: 0;
   transition: visibility 0.6s, opacity 0.6s ease;
 }
+
+.form__input-error_active {
+  font-size: 12px;
+  color: red;
+}
+
+.button__inactive {
+  background-color: rgba(0, 0, 0, .8)
+}

@@ -39,15 +39,3 @@ export const setCloseModalWindowEventListeners = modalElement => {
 };
 
 
-// export function openImageModal (link, name) {
-//     const modalImageElement = modalImage.querySelector('.popup__image');
-//     const modalCaption = modalImage.querySelector('.popup__caption');
-  
-//     modalImageElement.src = link;
-//     modalImageElement.alt = name;
-//     modalCaption.textContent = name;
-  
-//     openPopup(modalImage);
-//   }
-
-
