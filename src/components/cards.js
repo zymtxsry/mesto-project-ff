@@ -39,7 +39,7 @@ export function createCard(element, userId) {
 }
 
 export function deleteCard(cardId, cardElement) {
-  fetch(`${config.apiCardUrl}/${cardId}`, {
+  return fetch(`${config.apiCardUrl}/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
   })

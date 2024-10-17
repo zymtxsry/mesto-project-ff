@@ -86,7 +86,7 @@ function buttonLoading(popup, loadingText, mainText) {
 
 // --- Управление аватаром ---
 profileAvatarElement.addEventListener("click", () => {
-  avatarInput.value = ""; // Очищаем поле перед открытием
+  avatarInput.value = ""
   openPopup(avatarPopup);
   clearValidationError(avatarPopup.querySelector(".popup__form"));
 });
@@ -119,18 +119,8 @@ export function handleDeleteClick(cardId, cardElement) {
   openPopup(modalDeleteCard);
 }
 
-// modalDeleteCard.querySelector(".popup__container").addEventListener("click", (event) => {
-//     if (event.target.classList.contains("popup__button") && cardToDelete) {
-//       console.log(cardToDelete.id, cardToDelete.element)
-//       deleteCard(cardToDelete.id, cardToDelete.element)
-//       closePopup(modalDeleteCard);
-//       cardToDelete = null;
-//     }
-//   });
-
 modalDeleteCard.querySelector(".popup__container").addEventListener("click", (event) => {
   if (event.target.classList.contains("popup__button") && cardToDelete) {
-    console.log(cardToDelete.id, cardToDelete.element);
     deleteCard(cardToDelete.id, cardToDelete.element)
       .then(() => {
         closePopup(modalDeleteCard);
@@ -211,6 +201,9 @@ newCardPopup
       );
       cardsContainer.prepend(newCard);
       closePopup(newCardPopup);
+    })
+    .catch((error) => {
+      console.log(error)
     })
   .finally(() => {
       restoreButtonText(); 

@@ -8,6 +8,7 @@ export const showInputError = (formElement, inputElement, errorMessage) => {
 export const hideInputError = (formElement, inputElement) => {
   const formError = formElement.querySelector(`.${inputElement.id}-error`);
   inputElement.classList.remove("form__input_type_error");
+  inputElement.setCustomValidity('');
   formError.textContent = "";
   formError.classList.remove("form__input-error_active");
 };
