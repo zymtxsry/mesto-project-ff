@@ -9,10 +9,10 @@ export {
   cardsContainer,
   profileNameContent,
   profileDescriptionContent,
-  handleResponse,
   openImageModal,
 };
-import { createCard, deleteCard } from "../components/cards.js";
+import { likeIt } from "../components/like.js";
+import { createCard } from "../components/cards.js";
 import {
   closePopup,
   openPopup,
@@ -27,9 +27,9 @@ import {
   fetchUserAndCard,
   updateAvatar,
   updateUserInfo,
-  handleResponse,
   addNewCard,
-  userId,
+  // userId,
+  deleteCard,
 } from "../components/Api.js";
 
 // --- Элементы DOM ---
@@ -46,6 +46,7 @@ const modalImage = document.querySelector(".popup_type_image");
 const modalImageElement = modalImage.querySelector(".popup__image");
 const modalImageCaption = modalImage.querySelector(".popup__caption");
 const modalDeleteCard = document.querySelector(".popup_type_delete");
+const popupForm = document.querySelectorAll(".popup__form");
 
 // --- Поля ввода ---
 const nameInput = editPopup.querySelector(".popup__input_type_name");
@@ -77,16 +78,18 @@ export const config = {
   },
 };
 
+let userId = null;
+
 function buttonLoading(popup, loadingText, mainText) {
   popup.querySelector(".button").textContent = loadingText;
-  return function() {
-    popup.querySelector(".button").textContent = mainText
-  }
+  return function () {
+    popup.querySelector(".button").textContent = mainText;
+  };
 }
 
 // --- Управление аватаром ---
 profileAvatarElement.addEventListener("click", () => {
-  avatarInput.value = ""
+  avatarInput.value = "";
   openPopup(avatarPopup);
   clearValidationError(avatarPopup.querySelector(".popup__form"));
 });
@@ -96,9 +99,13 @@ avatarPopup
   .addEventListener("submit", (event) => {
     event.preventDefault();
     const avatarData = { avatar: avatarInput.value };
-    const resetButtonText = buttonLoading(avatarPopup,'Сохранение...', 'Сохранить');
+    const resetButtonText = buttonLoading(
+      avatarPopup,
+      "Сохранение...",
+      "Сохранить"
+    );
 
-    updateAvatar(avatarData)
+    updateAvatar(avatarData, config)
       .then((responseData) => {
         profileAvatarElement.style.backgroundImage = `url(${
           responseData.avatar
@@ -106,11 +113,11 @@ avatarPopup
         closePopup(avatarPopup);
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       })
       .finally(() => {
         resetButtonText();
-      })
+      });
   });
 
 // --- Удаление карточки ---
@@ -119,19 +126,20 @@ export function handleDeleteClick(cardId, cardElement) {
   openPopup(modalDeleteCard);
 }
 
-modalDeleteCard.querySelector(".popup__container").addEventListener("click", (event) => {
-  if (event.target.classList.contains("popup__button") && cardToDelete) {
-    deleteCard(cardToDelete.id, cardToDelete.element)
-      .then(() => {
-        closePopup(modalDeleteCard);
-        cardToDelete = null;
-      })
-      .catch((error) => {
-        console.log(error); 
-      });
-  }
-});
-
+modalDeleteCard
+  .querySelector(".popup__container")
+  .addEventListener("click", (event) => {
+    if (event.target.classList.contains("popup__button") && cardToDelete) {
+      deleteCard(cardToDelete.id, cardToDelete.element, config)
+        .then(() => {
+          closePopup(modalDeleteCard);
+          cardToDelete = null;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  });
 
 modalDeleteCard.querySelector(".popup__close").addEventListener("click", () => {
   closePopup(modalDeleteCard);
@@ -149,20 +157,24 @@ function editProfileFormSubmit(event) {
   event.preventDefault();
   const nameUpdate = nameInput.value;
   const aboutUpdate = descriptionInput.value;
-  const resetButtonText = buttonLoading(editPopup,'Сохранение...', 'Сохранить')
+  const resetButtonText = buttonLoading(
+    editPopup,
+    "Сохранение...",
+    "Сохранить"
+  );
 
-  updateUserInfo(nameUpdate, aboutUpdate)
-  .then((data) => {
-    profileNameContent.textContent = data.name;
-    profileDescriptionContent.textContent = data.about;
-    closePopup(editPopup);
-  })
-  .catch((error) => {
-    console.error(error);
-  })
-  .finally(() => {
-    resetButtonText()
-  })
+  updateUserInfo(nameUpdate, aboutUpdate, config)
+    .then((data) => {
+      profileNameContent.textContent = data.name;
+      profileDescriptionContent.textContent = data.about;
+      closePopup(editPopup);
+    })
+    .catch((error) => {
+      console.error(error);
+    })
+    .finally(() => {
+      resetButtonText();
+    });
 }
 
 editPopup
@@ -186,28 +198,37 @@ newCardPopup
       link: cardLinkInput.value,
     };
 
-    const restoreButtonText = buttonLoading(newCardPopup, 'Сохранение...', 'Сохранить');
+    const restoreButtonText = buttonLoading(
+      newCardPopup,
+      "Сохранение...",
+      "Сохранить"
+    );
 
-    addNewCard(newCardData).then((res) => {
-      const newCard = createCard(
-        {
-          name: res.name,
-          link: res.link,
-          likes: res.likes,
-          id: res._id,
-          ownerId: res.owner._id,
-        },
-        userId
-      );
-      cardsContainer.prepend(newCard);
-      closePopup(newCardPopup);
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  .finally(() => {
-      restoreButtonText(); 
-  })
+    addNewCard(newCardData, config)
+      .then((res) => {
+        const newCard = createCard(
+          {
+            name: res.name,
+            link: res.link,
+            likes: res.likes,
+            id: res._id,
+            ownerId: res.owner._id,
+          },
+          userId,
+          likeIt,
+          openImageModal,
+          cardTemplate,
+          handleDeleteClick
+        );
+        cardsContainer.prepend(newCard);
+        closePopup(newCardPopup);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        restoreButtonText();
+      });
   });
 
 // --- Модальное окно изображения ---
@@ -226,11 +247,37 @@ function openImageModal(link, name) {
 );
 
 // --- Валидация форм ---
-enableValidation();
+enableValidation(popupForm);
 
 // --- Начальная загрузка данных ---
-fetchUserAndCard(
-  profileNameContent,
-  profileDescriptionContent,
-  profileAvatarElement
-);
+fetchUserAndCard(config)
+.then(([userInfo, cardsData]) => {
+  profileNameContent.textContent = userInfo.name;
+  profileDescriptionContent.textContent = userInfo.about;
+  profileAvatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
+        userId = userInfo._id;
+  
+        cardsData.forEach((card) => {
+          const element = {
+            name: card.name,
+            link: card.link,
+            likes: card.likes,
+            id: card._id,
+            ownerId: card.owner._id,
+          };
+          cardsContainer.append(
+            createCard(
+              element,
+              userId,
+              likeIt,
+              openImageModal,
+              cardTemplate,
+              handleDeleteClick
+            )
+          );
+        });
+      })
+      .catch((error) => {
+        throw error;
+      });
+

@@ -1,11 +1,3 @@
-import {
-  config,
-  cardsContainer,
-} from "../pages/index.js";
-
-import { createCard } from "./cards.js";
-
-export let userId = null;
 
 // Обработка ответа от сервера
 export function handleResponse(res) {
@@ -16,78 +8,80 @@ export function handleResponse(res) {
 }
 
 // Функция добавления новой карточки
-export function addNewCard(data) {
+export function addNewCard(data, config) {
   return fetch(`${config.apiCardUrl}`, {
     method: "POST",
     headers: config.headers,
     body: JSON.stringify(data),
-  }).then(handleResponse);
-}
-
-// Лайк карточки
-export function likeCard(cardId) {
-  return fetch(`${config.apiCardUrl}/${cardId}/likes`, {
-    method: "PUT",
-    headers: config.headers,
-  }).then(handleResponse);
-}
-
-// Удаление лайка карточки
-export function unlikeCard(cardId) {
-  return fetch(`${config.apiCardUrl}/${cardId}/likes`, {
-    method: "DELETE",
-    headers: config.headers,
-  }).then(handleResponse);
-}
-
-// Функция получения данных пользователя и карточек
-export function fetchUserAndCard(name, description, avatar) {
-  Promise.all([
-    fetch(config.apiUserUrl, { headers: config.headers }).then(handleResponse),
-    fetch(config.apiCardUrl, { headers: config.headers }).then(handleResponse),
-  ])
-    .then(([userInfo, cardsData]) => {
-      name.textContent = userInfo.name;
-      description.textContent = userInfo.about;
-      avatar.style.backgroundImage = `url(${userInfo.avatar})`;
-      userId = userInfo._id;
-
-      cardsData.forEach((card) => {
-        const element = {
-          name: card.name,
-          link: card.link,
-          likes: card.likes,
-          id: card._id,
-          ownerId: card.owner._id,
-        };
-        cardsContainer.append(createCard(element, userId));
-      });
-    })
+  })
+    .then(handleResponse)
     .catch((error) => {
-      throw error;
+      console.log(error);
     });
 }
 
+// Лайк карточки
+export function likeCard(cardId, config) {
+  return fetch(`${config.apiCardUrl}/${cardId}/likes`, {
+    method: "PUT",
+    headers: config.headers,
+  })
+    .then(handleResponse)
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+// Удаление лайка карточки
+export function unlikeCard(cardId, config) {
+  return fetch(`${config.apiCardUrl}/${cardId}/likes`, {
+    method: "DELETE",
+    headers: config.headers,
+  })
+    .then(handleResponse)
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+
+// Функция получения данных пользователя и карточек
+export function fetchUserAndCard(config) {
+  return Promise.all([
+    fetch(config.apiUserUrl, { headers: config.headers }).then(handleResponse),
+    fetch(config.apiCardUrl, { headers: config.headers }).then(handleResponse),
+  ])
+}
+
+
 // Обновление информации о пользователе
-export function updateUserInfo(name, about) {
+export function updateUserInfo(name, about, config) {
   return fetch(`${config.apiUserUrl}`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({ name, about }),
-  }).then(handleResponse);
+  })
+    .then(handleResponse)
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 // Обновление аватара
-export function updateAvatar(data) {
+export function updateAvatar(data, config) {
   return fetch(`${config.apiUserUrl}/avatar`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify(data),
-  }).then(handleResponse);
+  })
+    .then(handleResponse)
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 // Удаление карточки
-export function deleteCard(cardId, cardElement) {
+export function deleteCard(cardId, cardElement, config) {
   return fetch(`${config.apiCardUrl}/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
@@ -95,5 +89,8 @@ export function deleteCard(cardId, cardElement) {
     .then(handleResponse)
     .then(() => {
       cardElement.remove();
+    })
+    .catch((error) => {
+      console.log(error);
     });
 }

@@ -1,13 +1,5 @@
-import { handleResponse } from './Api.js'
-import { likeIt } from "./like.js";
-import {
-  config,
-  handleDeleteClick,
-  openImageModal,
-  cardTemplate,
-} from "../pages/index.js";
 
-export function createCard(element, userId) {
+export function createCard(element, userId, likeFun, openImageModal, cardTemplate, handleDeleteClick) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const buttonDelete = cardElement.querySelector(".card__delete-button");
   const cardImage = cardElement.querySelector(".card__image");
@@ -19,8 +11,13 @@ export function createCard(element, userId) {
   cardElement.querySelector(".card__title").textContent = element.name;
   cardLikesCounter.textContent = `${element.likes.length}`;
 
+  const userLike = element.likes.some(like => like._id === userId);
+  if (userLike) {
+    likeButton.classList.add('card__like-button_is-active'); 
+  }
+
   likeButton.addEventListener("click", (evt) => {
-    likeIt(evt, element.id, cardLikesCounter);
+    likeFun(evt, element.id, cardLikesCounter);
   });
   cardImage.addEventListener("click", () =>
     openImageModal(element.link, element.name)
@@ -38,13 +35,13 @@ export function createCard(element, userId) {
   return cardElement;
 }
 
-export function deleteCard(cardId, cardElement) {
-  return fetch(`${config.apiCardUrl}/${cardId}`, {
-    method: "DELETE",
-    headers: config.headers,
-  })
-    .then(handleResponse)
-    .then(() => {
-      cardElement.remove();
-    });
-}
+// export function deleteCard(cardId, cardElement, config) {
+//   return fetch(`${config.apiCardUrl}/${cardId}`, {
+//     method: "DELETE",
+//     headers: config.headers,
+//   })
+//     .then(handleResponse)
+//     .then(() => {
+//       cardElement.remove();
+//     });
+// }

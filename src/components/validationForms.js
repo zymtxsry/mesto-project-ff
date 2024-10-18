@@ -37,8 +37,8 @@ export const setEventListeners = (formElement) => {
   });
 };
 
-export const enableValidation = () => {
-  const formList = Array.from(document.querySelectorAll(".popup__form"));
+export const enableValidation = (form) => {
+  const formList = Array.from(form);
 
   formList.forEach(setEventListeners)
 };
@@ -65,6 +65,5 @@ export const clearValidationError = (formElement) => {
     hideInputError(formElement, inputElement);
   });
   const buttonElement = formElement.querySelector(".button");
-  buttonElement.disabled = false;
-  buttonElement.classList.remove("button__inactive");
+  toggleButtonState(inputList, buttonElement);
 };
