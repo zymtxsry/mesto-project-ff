@@ -28,7 +28,6 @@ import {
   updateAvatar,
   updateUserInfo,
   addNewCard,
-  // userId,
   deleteCard,
 } from "../components/Api.js";
 
