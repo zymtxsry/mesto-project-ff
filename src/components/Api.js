@@ -15,9 +15,6 @@ export function addNewCard(data, config) {
     body: JSON.stringify(data),
   })
     .then(handleResponse)
-    .catch((error) => {
-      console.log(error);
-    });
 }
 
 // Лайк карточки
@@ -27,9 +24,6 @@ export function likeCard(cardId, config) {
     headers: config.headers,
   })
     .then(handleResponse)
-    .catch((error) => {
-      console.log(error);
-    });
 }
 
 // Удаление лайка карточки
@@ -39,9 +33,6 @@ export function unlikeCard(cardId, config) {
     headers: config.headers,
   })
     .then(handleResponse)
-    .catch((error) => {
-      console.log(error);
-    });
 }
 
 
@@ -62,9 +53,6 @@ export function updateUserInfo(name, about, config) {
     body: JSON.stringify({ name, about }),
   })
     .then(handleResponse)
-    .catch((error) => {
-      console.log(error);
-    });
 }
 
 // Обновление аватара
@@ -75,22 +63,14 @@ export function updateAvatar(data, config) {
     body: JSON.stringify(data),
   })
     .then(handleResponse)
-    .catch((error) => {
-      console.log(error);
-    });
 }
 
 // Удаление карточки
-export function deleteCard(cardId, cardElement, config) {
+export function deleteCard(cardId, config, passingCardElement) {
   return fetch(`${config.apiCardUrl}/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
   })
     .then(handleResponse)
-    .then(() => {
-      cardElement.remove();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    .then(passingCardElement)
 }

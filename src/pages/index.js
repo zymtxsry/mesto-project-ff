@@ -129,7 +129,9 @@ modalDeleteCard
   .querySelector(".popup__container")
   .addEventListener("click", (event) => {
     if (event.target.classList.contains("popup__button") && cardToDelete) {
-      deleteCard(cardToDelete.id, cardToDelete.element, config)
+      deleteCard(cardToDelete.id, config, () => {
+        cardToDelete.element.remove()
+      })
         .then(() => {
           closePopup(modalDeleteCard);
           cardToDelete = null;
