@@ -31,6 +31,16 @@ import {
   deleteCard,
 } from "../components/Api.js";
 
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  buttonSelector: '.button',
+  buttonInactiveClass: 'button__inactive',
+  inputErrorClass: 'form__input_type_error',
+  errorClass: 'error',
+  errorActiveClass: 'form__input-error_active'
+};
+
 // --- Элементы DOM ---
 const cardTemplate = document.querySelector("#card-template").content;
 const cardsContainer = document.querySelector(".places__list");
@@ -90,7 +100,7 @@ function buttonLoading(popup, loadingText, mainText) {
 profileAvatarElement.addEventListener("click", () => {
   avatarInput.value = "";
   openPopup(avatarPopup);
-  clearValidationError(avatarPopup.querySelector(".popup__form"));
+  clearValidationError(avatarPopup, validationConfig);
 });
 
 avatarPopup
@@ -151,7 +161,7 @@ buttonEdit.addEventListener("click", () => {
   nameInput.value = profileNameContent.textContent;
   descriptionInput.value = profileDescriptionContent.textContent;
   openPopup(editPopup);
-  clearValidationError(editPopup.querySelector(".popup__form"));
+  clearValidationError(editPopup, validationConfig);
 });
 
 function editProfileFormSubmit(event) {
@@ -187,7 +197,7 @@ buttonAdd.addEventListener("click", () => {
   cardNameInput.value = "";
   cardLinkInput.value = "";
   openPopup(newCardPopup);
-  clearValidationError(newCardPopup.querySelector(".popup__form"));
+  clearValidationError(newCardPopup, validationConfig);
 });
 
 newCardPopup
@@ -248,7 +258,7 @@ function openImageModal(link, name) {
 );
 
 // --- Валидация форм ---
-enableValidation(popupForm);
+enableValidation(validationConfig);
 
 // --- Начальная загрузка данных ---
 fetchUserAndCard(config)
